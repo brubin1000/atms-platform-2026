@@ -31,7 +31,7 @@ export const reminderWorker = new Worker(
       if (payment.deadline && isBefore(payment.deadline, threshold)) {
         await resend.emails.send({
           from: process.env.EMAIL_FROM || 'noreply@atms.space',
-          to: ['finance@atms.space'],
+          to: [process.env.FINANCE_EMAIL || 'finance@atms.space'],
           subject: `Payment reminder: ${payment.amount} ${payment.currency}`,
           text: `Payment ${payment._id} is due by ${payment.deadline.toISOString()}.`
         });
