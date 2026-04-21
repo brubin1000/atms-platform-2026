@@ -1,0 +1,13 @@
+{
+  "name": "atms-platform-2026",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=apps/api",
+    "build": "npm run build --workspace=apps/api",
+    "typecheck": "npm run typecheck --workspace=apps/api"
+  }
+}
