@@ -29,12 +29,19 @@ export const reminderWorker = new Worker(
 
     for (const payment of upcoming) {
       if (payment.deadline && isBefore(payment.deadline, threshold)) {
-        await resend.emails.send({
-          from: process.env.EMAIL_FROM || 'noreply@atms.space',
-          to: [process.env.FINANCE_EMAIL || 'finance@atms.space'],
-          subject: `Payment reminder: ${payment.amount} ${payment.currency}`,
-          text: `Payment ${payment._id} is due by ${payment.deadline.toISOString()}.`
-        });
+        try {
+          await resend.emails.send({
+            from: process.env.EMAIL_FROM || 'noreply@atms.space',
+            to: [process.env.FINANCE_EMAIL || 'finance@atms.space'],
+            subject: `Payment reminder: ${payment.amount} ${payment.currency}`,
+            text: `Payment ${payment._id} is due by ${payment.deadline.toISOString()}.`
+          });
+        } catch (error) {
+          console.error('Failed to send payment reminder', {
+            paymentId: String(payment._id),
+            error
+          });
+        }
       }
     }
   },

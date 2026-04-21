@@ -49,7 +49,7 @@ export const MUSIC_INDUSTRY_KEYWORDS = [
   'hotel'
 ];
 
-const CACHE_LIMIT = 500;
+const FIFO_CACHE_LIMIT = 500;
 const parseCache = new Map<string, ParsedResult>();
 
 const fallbackResult: ParsedResult = {
@@ -116,7 +116,7 @@ function normalizeResult(candidate: Partial<ParsedResult>): ParsedResult {
 }
 
 function cacheSet(key: string, value: ParsedResult) {
-  if (parseCache.size >= CACHE_LIMIT) {
+  if (parseCache.size >= FIFO_CACHE_LIMIT) {
     const firstKey = parseCache.keys().next().value as string | undefined;
     if (firstKey) {
       parseCache.delete(firstKey);

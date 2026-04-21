@@ -33,9 +33,19 @@ export async function POST(request: NextRequest) {
   }
 
   if (payload.type === 'pdf') {
-    const data = await pdfParse(Buffer.from(payload.content, 'base64'));
-    body = data.text;
-    source = 'pdf';
+    try {
+      const data = await pdfParse(Buffer.from(payload.content, 'base64'));
+      body = data.text;
+      source = 'pdf';
+    } catch {
+      return NextResponse.json(
+        {
+          error: 'Failed to parse PDF content',
+          details: { filename: payload.filename, contentLength: payload.content.length }
+        },
+        { status: 400 }
+      );
+    }
   }
 
   if (payload.type === 'csv') {
