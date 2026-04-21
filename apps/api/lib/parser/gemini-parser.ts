@@ -49,6 +49,7 @@ export const MUSIC_INDUSTRY_KEYWORDS = [
   'hotel'
 ];
 
+const CACHE_LIMIT = 500;
 const parseCache = new Map<string, ParsedResult>();
 
 const fallbackResult: ParsedResult = {
@@ -114,6 +115,16 @@ function normalizeResult(candidate: Partial<ParsedResult>): ParsedResult {
   } as ParsedResult;
 }
 
+function cacheSet(key: string, value: ParsedResult) {
+  if (parseCache.size >= CACHE_LIMIT) {
+    const firstKey = parseCache.keys().next().value as string | undefined;
+    if (firstKey) {
+      parseCache.delete(firstKey);
+    }
+  }
+  parseCache.set(key, value);
+}
+
 export async function parseEmailWithGemini(text: string): Promise<ParsedResult> {
   if (!text || !shouldParseWithAI(text)) {
     return fallbackResult;
@@ -133,9 +144,13 @@ export async function parseEmailWithGemini(text: string): Promise<ParsedResult> 
   const client = new GoogleGenerativeAI(apiKey);
   const model = client.getGenerativeModel({ model: 'gemini-1.5-flash' });
   const response = await model.generateContent(`${PROMPT}\n\nINPUT:\n${text}`);
-  const raw = response.response.text().trim();
 
-  const parsed = normalizeResult(JSON.parse(raw));
-  parseCache.set(cacheKey, parsed);
-  return parsed;
+  try {
+    const raw = response.response.text().trim();
+    const parsed = normalizeResult(JSON.parse(raw));
+    cacheSet(cacheKey, parsed);
+    return parsed;
+  } catch {
+    return fallbackResult;
+  }
 }

@@ -5,12 +5,19 @@ import { connectToDatabase } from '@/lib/db/mongoose';
 import { Payment } from '@/lib/models';
 import { getRedisConnection } from '@/lib/queue/redis';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+function getResendClient(): Resend {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    throw new Error('RESEND_API_KEY is required for payment reminder worker');
+  }
+  return new Resend(apiKey);
+}
 
 export const reminderWorker = new Worker(
   'payment-reminder-queue',
   async () => {
     await connectToDatabase();
+    const resend = getResendClient();
 
     const upcoming = await Payment.find({
       status: { $in: ['scheduled', 'pending'] },

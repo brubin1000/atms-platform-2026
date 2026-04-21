@@ -15,8 +15,13 @@ const ingestSchema = z.object({
 
 export async function POST(request: NextRequest) {
   await connectToDatabase();
-  const payload = ingestSchema.parse(await request.json());
+  const result = ingestSchema.safeParse(await request.json());
 
+  if (!result.success) {
+    return NextResponse.json({ error: 'Invalid ingest payload', details: result.error.flatten() }, { status: 400 });
+  }
+
+  const payload = result.data;
   let subject = payload.filename || 'Ingested content';
   let body = payload.content;
   let source: 'api' | 'csv' | 'pdf' | 'forwarded' | 'gmail' = 'api';
