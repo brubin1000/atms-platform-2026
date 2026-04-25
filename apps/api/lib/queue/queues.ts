@@ -4,6 +4,7 @@ import { getRedisConnection } from './redis';
 let emailParseQueue: Queue | null = null;
 let showCreateQueue: Queue | null = null;
 let paymentReminderQueue: Queue | null = null;
+let showLifecycleQueue: Queue | null = null;
 
 export function getEmailParseQueue(): Queue {
   if (!emailParseQueue) {
@@ -24,4 +25,11 @@ export function getPaymentReminderQueue(): Queue {
     paymentReminderQueue = new Queue('payment-reminder-queue', { connection: getRedisConnection() });
   }
   return paymentReminderQueue;
+}
+
+export function getShowLifecycleQueue(): Queue {
+  if (!showLifecycleQueue) {
+    showLifecycleQueue = new Queue('show-lifecycle-queue', { connection: getRedisConnection() });
+  }
+  return showLifecycleQueue;
 }
