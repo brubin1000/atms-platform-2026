@@ -1,0 +1,35 @@
+{
+  "name": "@atms/api",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.3.1",
+    "bullmq": "^5.75.2",
+    "csv-parse": "^5.6.0",
+    "date-fns": "^3.6.0",
+    "ioredis": "^5.10.1",
+    "mailparser": "^3.9.8",
+    "mongoose": "^8.23.0",
+    "nanoid": "^5.1.9",
+    "next": "^15.5.15",
+    "next-auth": "^4.24.14",
+    "pdf-parse": "^1.1.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "resend": "^3.5.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/mailparser": "^3.4.6",
+    "@types/node": "^20.19.39",
+    "@types/pdf-parse": "^1.1.5",
+    "typescript": "^5.9.3",
+    "@types/react": "^18.3.28",
+    "@types/react-dom": "^18.3.7"
+  }
+}
